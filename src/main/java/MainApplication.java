@@ -1,0 +1,124 @@
+import Lec05_ZMQ.DEALER_ROUTER.Lec05DealerRouterClient;
+import Lec05_ZMQ.DEALER_ROUTER.Lec05DealerRouterServer;
+import Lec05_ZMQ.P2P.Lec05P2P;
+import Lec05_ZMQ.PUB_SUB.Lec05Publisher;
+import Lec05_ZMQ.PUB_SUB.Lec05Subscriber;
+import Lec05_ZMQ.PULL_PUSH.Lec05PullPushServer;
+import Lec05_ZMQ.PULL_PUSH.Lec05PullPushClient;
+import Lec05_ZMQ.PULL_PUSH2.Lec05PullPushClientV2;
+import Lec05_ZMQ.PULL_PUSH2.Lec05PullPushServerV2;
+import Lec05_ZMQ.REQ_REP.Lec05BasicClient;
+import Lec05_ZMQ.REQ_REP.Lec05BasicServer;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Scanner;
+public class MainApplication {
+
+    public static void main(String[] args) throws SocketException {
+        System.out.println("실행하고 싶은 프로그래밍의 번호를 알려주세요.");
+        int menu = getMenu();
+        switch (menu){
+            case 1:
+                REQ_REP();
+                break;
+            case 2:
+                SUB_PUB();
+                break;
+            case 3:
+                PULL_PUSH();
+                break;
+            case 4:
+                PULL_PUSH_V2();
+                break;
+            case 5:
+                ROUTER_DEALER();
+                break;
+            case 6:
+                P2P_CHAT();
+                break;
+        }
+    }
+    public static void REQ_REP(){
+        Lec05BasicServer basicServer = new Lec05BasicServer();
+        basicServer.start();
+        Lec05BasicClient basicClient = new Lec05BasicClient();
+        basicClient.start();
+    }
+
+    public static void PULL_PUSH() {
+        Lec05PullPushClient server = new Lec05PullPushClient();
+        server.start();
+
+        Lec05PullPushServer client = new Lec05PullPushServer();
+        client.start();
+    }
+
+    public static void PULL_PUSH_V2(){
+        Lec05PullPushServerV2 server = new Lec05PullPushServerV2();
+        server.start();
+
+        Lec05PullPushClientV2 client = new Lec05PullPushClientV2("Mr handsome");
+        client.start();
+
+
+        Lec05PullPushClientV2 client2 = new Lec05PullPushClientV2("Mr ugly");
+        client2.start();
+
+    }
+
+
+    public static void SUB_PUB(){
+        Lec05Publisher server = new Lec05Publisher();
+        server.start();
+
+        Lec05Subscriber client1 = new Lec05Subscriber(10001);
+        client1.start();
+
+        Lec05Subscriber client2 = new Lec05Subscriber(9999);
+        client2.start();
+    }
+
+    public static void ROUTER_DEALER(){
+        Lec05DealerRouterServer server = new Lec05DealerRouterServer(3);
+        server.start();
+        for(int i =0; i<2; i++) {
+            Lec05DealerRouterClient client = new Lec05DealerRouterClient(i);
+            client.start();
+        }
+    }
+
+    public static void P2P_CHAT(){
+        Lec05P2P lec05P2P = new Lec05P2P("Roh Hyun Uk");
+        //System.out.println("My IP is " + lec05P2P.get_local_ip());
+        lec05P2P.start();
+    }
+
+    public static int getMenu(){
+        System.out.println("원하시는 메뉴의 번호를 넣어주세요.");
+        System.out.println("1. Request, Response pattern");
+        System.out.println("2. Publish, Subscribe pattern");
+        System.out.println("3. Pull, Push pattern");
+        System.out.println("4. Pull, Push pattern");
+        System.out.println("5. Dealer, Router Pattern");
+        System.out.println("6. P2P dechat");
+
+        Scanner s1 = new Scanner(System.in);
+        String menu = s1.nextLine();
+        int noMenu = 0;
+        try{
+            noMenu = Integer.parseInt(menu);
+            if (noMenu > 6 || noMenu < 1) {
+                throw new NumberFormatException();
+            }
+            return noMenu;
+        }
+        catch(NumberFormatException e){
+            System.out.println("[ERROR] 1~6중 하나의 숫자를 입력해 주세요.");
+            return getMenu();
+        }
+    }
+}
