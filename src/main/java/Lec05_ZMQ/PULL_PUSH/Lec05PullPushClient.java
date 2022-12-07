@@ -1,5 +1,6 @@
 package Lec05_ZMQ.PULL_PUSH;
 
+import Lec05_ZMQ.SleepUtility;
 import java.util.Scanner;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
@@ -18,12 +19,11 @@ public class Lec05PullPushClient extends Thread{
 
         Random random = new Random();
 
-        Poller poller = context.createPoller(2);
+        Poller poller = context.createPoller(1);
         poller.register(subscriber);
-        poller.register(publisher);
 
         while(true){
-            if (poller.poll(100) == 0){
+            if (poller.poll(100) != 0){
                 String message = subscriber.recvStr();
                 System.out.println("I: received message " + message);
             }

@@ -72,11 +72,11 @@ public class MainApplication {
 
         int menu = getClientOrServer();
         if(menu == 1) {
-            Lec05PullPushClient server = new Lec05PullPushClient();
+            Lec05PullPushServer server = new Lec05PullPushServer();
             server.start();
         }
         else {
-            Lec05PullPushServer client = new Lec05PullPushServer();
+            Lec05PullPushClient client = new Lec05PullPushClient();
             client.start();
         }
     }
