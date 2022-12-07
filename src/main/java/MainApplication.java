@@ -9,12 +9,8 @@ import Lec05_ZMQ.PULL_PUSH2.Lec05PullPushClientV2;
 import Lec05_ZMQ.PULL_PUSH2.Lec05PullPushServerV2;
 import Lec05_ZMQ.REQ_REP.Lec05BasicClient;
 import Lec05_ZMQ.REQ_REP.Lec05BasicServer;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.Random;
 import java.util.Scanner;
 public class MainApplication {
 
@@ -42,58 +38,104 @@ public class MainApplication {
                 break;
         }
     }
+
+    public static int getClientOrServer(){
+        Scanner s1 = new Scanner(System.in);
+        try{
+            System.out.println("서버를 실행할지 클라이언트를 실행할지 정해주세요.");
+            System.out.println("1.서버\n2.클라이언트");
+            int menu = s1.nextInt();
+            if(menu != 1 && menu != 2){
+                throw new IllegalArgumentException();
+            }
+            return menu;
+        }
+        catch(Exception e)
+        {
+            return getClientOrServer();
+        }
+    }
+
     public static void REQ_REP(){
-        Lec05BasicServer basicServer = new Lec05BasicServer();
-        basicServer.start();
-        Lec05BasicClient basicClient = new Lec05BasicClient();
-        basicClient.start();
+        int menu = getClientOrServer();
+        if(menu == 1) {
+            Lec05BasicServer basicServer = new Lec05BasicServer();
+            basicServer.start();
+        }
+        if(menu == 2) {
+            Lec05BasicClient basicClient = new Lec05BasicClient();
+            basicClient.start();
+        }
     }
 
     public static void PULL_PUSH() {
-        Lec05PullPushClient server = new Lec05PullPushClient();
-        server.start();
 
-        Lec05PullPushServer client = new Lec05PullPushServer();
-        client.start();
-    }
-
-    public static void PULL_PUSH_V2(){
-        Lec05PullPushServerV2 server = new Lec05PullPushServerV2();
-        server.start();
-
-        Lec05PullPushClientV2 client = new Lec05PullPushClientV2("Mr handsome");
-        client.start();
-
-
-        Lec05PullPushClientV2 client2 = new Lec05PullPushClientV2("Mr ugly");
-        client2.start();
-
-    }
-
-
-    public static void SUB_PUB(){
-        Lec05Publisher server = new Lec05Publisher();
-        server.start();
-
-        Lec05Subscriber client1 = new Lec05Subscriber(10001);
-        client1.start();
-
-        Lec05Subscriber client2 = new Lec05Subscriber(9999);
-        client2.start();
-    }
-
-    public static void ROUTER_DEALER(){
-        Lec05DealerRouterServer server = new Lec05DealerRouterServer(3);
-        server.start();
-        for(int i =0; i<2; i++) {
-            Lec05DealerRouterClient client = new Lec05DealerRouterClient(i);
+        int menu = getClientOrServer();
+        if(menu == 1) {
+            Lec05PullPushClient server = new Lec05PullPushClient();
+            server.start();
+        }
+        else {
+            Lec05PullPushServer client = new Lec05PullPushServer();
             client.start();
         }
     }
 
+    public static void PULL_PUSH_V2(){
+
+        int menu = getClientOrServer();
+        if(menu == 1) {
+            Lec05PullPushServerV2 server = new Lec05PullPushServerV2();
+            server.start();
+        }
+        else{
+            Random random = new Random();
+            String cliId = "Mr handsome" + random.nextInt(100);
+            System.out.println("Your Client ID : " + cliId);
+            Lec05PullPushClientV2 client = new Lec05PullPushClientV2(cliId);
+            client.start();
+        }
+    }
+
+
+    public static void SUB_PUB(){
+
+        int menu = getClientOrServer();
+        if(menu == 1) {
+            Lec05Publisher server = new Lec05Publisher();
+            server.start();
+        }
+        else{
+            Random random = new Random();
+            String cliId = ""+random.nextInt(10001)+1;
+            System.out.println("Your Zip code : " + cliId);
+
+            Lec05Subscriber client1 = new Lec05Subscriber(Integer.parseInt(cliId));
+            client1.start();
+
+        }
+
+    }
+
+    public static void ROUTER_DEALER(){
+
+        int menu = getClientOrServer();
+        if(menu == 1) {
+            Lec05DealerRouterServer server = new Lec05DealerRouterServer(3);
+            server.start();
+        }
+        else
+            for(int i =0; i<2; i++) {
+                Lec05DealerRouterClient client = new Lec05DealerRouterClient(i);
+                client.start();
+            }
+    }
+
     public static void P2P_CHAT(){
-        Lec05P2P lec05P2P = new Lec05P2P("Roh Hyun Uk");
-        //System.out.println("My IP is " + lec05P2P.get_local_ip());
+        Random random = new Random();
+        String cliId = "Mr handsome" + random.nextInt(100);
+        System.out.println("Your CliId is " + cliId);
+        Lec05P2P lec05P2P = new Lec05P2P(cliId);
         lec05P2P.start();
     }
 
